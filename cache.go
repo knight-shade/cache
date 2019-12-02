@@ -12,8 +12,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
+	"github.com/knight-shade/cache/persistence"
 )
 
 const (
