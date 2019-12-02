@@ -3,13 +3,14 @@ package cache
 import (
 	"bytes"
 	"crypto/sha1"
+	"encoding/gob"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
 	"sync"
 	"time"
-	"encoding/gob"
 
 	"github.com/gin-contrib/cache/persistence"
 	"github.com/gin-gonic/gin"
@@ -28,6 +29,7 @@ type responseCache struct {
 	Header http.Header
 	Data   []byte
 }
+
 // RegisterResponseCacheGob registers the responseCache type with the encoding/gob package
 func RegisterResponseCacheGob() {
 	gob.Register(responseCache{})
@@ -91,7 +93,9 @@ func (w *cachedWriter) Write(data []byte) (int, error) {
 		}
 
 		//cache responses with a status code < 300
+		fmt.Println("w.Status() := ", w.Status())
 		if w.Status() < 300 {
+			fmt.Println("inside w.Status() := ", w.Status())
 			val := responseCache{
 				w.Status(),
 				w.Header(),
@@ -101,6 +105,8 @@ func (w *cachedWriter) Write(data []byte) (int, error) {
 			if err != nil {
 				// need logger
 			}
+		} else {
+			fmt.Println("not caching, status code := ", w.Status())
 		}
 	}
 	return ret, err
